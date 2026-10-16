@@ -3,6 +3,9 @@ FROM srbench/base:latest
 # Build argument for algorithm name
 ARG ALGORITHM=bingo
 
+# Switch to root for installation
+USER root
+
 # Copy install script and algorithm files
 COPY scripts/install_algorithm.sh /install/install_algorithm.sh
 COPY base_environment.yml /install/base_environment.yml
@@ -13,8 +16,7 @@ ENV TMPDIR=/tmp
 
 # Run installation
 WORKDIR /install
-RUN chmod -R a+w /install && \
-    eval "$(micromamba shell hook --shell bash)" && \
+RUN eval "$(micromamba shell hook --shell bash)" && \
     micromamba activate base && \
     bash install_algorithm.sh "/install/algorithms/${ALGORITHM}" && \
     micromamba clean --all --yes && \
