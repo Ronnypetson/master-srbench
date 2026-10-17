@@ -18,15 +18,15 @@ ENV TMPDIR=/tmp
 WORKDIR /install
 RUN eval "$(micromamba shell hook --shell bash)" && \
     micromamba activate base && \
+    bash install_algorithm.sh "/install/algorithms/${ALGORITHM}" && \
     which julia && \
     julia --version && \
-    bash install_algorithm.sh "/install/algorithms/${ALGORITHM}" && \
     micromamba clean --all --yes && \
     mkdir -p /srbench
 
 # Set environment
 ENV ALGORITHM=${ALGORITHM}
-ENV LD_LIBRARY_PATH=/opt/conda/lib:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH=/opt/conda/lib:${LD_LIBRARY_PATH:-}
 
 # Default working directory
 WORKDIR /srbench
