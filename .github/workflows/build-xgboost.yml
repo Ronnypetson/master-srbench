@@ -1,0 +1,33 @@
+name: Build XGBoost Docker Image
+
+on:
+  workflow_dispatch:  # manual trigger
+  push:
+    paths:
+      - 'algorithms/xgboost/**'
+      - 'Dockerfile.xgboost'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.xgboost
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/srbench-xgboost:latest
+          build-args: |
+            ALGORITHM=xgboost
