@@ -22,6 +22,10 @@ COPY algorithms/${ALGORITHM} /install/algorithms/${ALGORITHM}
 # Set temp directory to /tmp to avoid permission issues
 ENV TMPDIR=/tmp
 
+# Make conda libs visible to the loader during install (julia needs
+# libutf8proc.so.2 etc. from /opt/conda/lib) and in the final image.
+ENV LD_LIBRARY_PATH=/opt/conda/lib
+
 # Run installation
 WORKDIR /install
 RUN eval "$(micromamba shell hook --shell bash)" && \
@@ -34,7 +38,6 @@ RUN eval "$(micromamba shell hook --shell bash)" && \
 
 # Set environment
 ENV ALGORITHM=${ALGORITHM}
-ENV LD_LIBRARY_PATH=/opt/conda/lib:${LD_LIBRARY_PATH:-}
 
 # Default working directory
 WORKDIR /srbench
