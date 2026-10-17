@@ -6,6 +6,14 @@ ARG ALGORITHM=pysr
 # Switch to root for installation
 USER root
 
+# conda-forge julia's libgit2 needs OpenSSL + CA certs to initialize; without
+# them every `julia` invocation exits 1 and pysr.install() fails. The base
+# image doesn't ship these, and its rebuild workflow is disabled, so install
+# them here.
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates openssl libssl3 && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy install script and algorithm files
 COPY scripts/install_algorithm.sh /install/install_algorithm.sh
 COPY base_environment.yml /install/base_environment.yml

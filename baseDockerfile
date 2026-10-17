@@ -13,6 +13,9 @@ RUN sed -i -e "s/http/https/" /etc/apt/sources.list.d/debian.sources \
         curl \
         git \
         build-essential \
+        ca-certificates \
+        openssl \
+        libssl3 \
         libgmp3-dev \
         libblas-dev \
         liblapack-dev \
