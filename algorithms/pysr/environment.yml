@@ -4,5 +4,7 @@ dependencies:
     - pysr==0.16
     - python==3.11
     - julia=1.10
+    # julia 1.10 needs libutf8proc.so.2; utf8proc 3.x provides .so.3 (ABI break)
+    - utf8proc=2
     - numpy=1.26.4
     - scikit-learn<1.6 # PySR 0.16 uses BaseEstimator._validate_data, removed in scikit-learn 1.6.
