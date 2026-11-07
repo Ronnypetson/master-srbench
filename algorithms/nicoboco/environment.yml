@@ -4,10 +4,11 @@ channels:
 dependencies:
   - python>=3.11
   - numpy
-  - pytorch =*=*cuda*
   - scikit-learn
   - sympy
   - tqdm
   - pip
   - pip:
+      - torch
+      - torchvision
       - nicoboco @ git+https://${GITHUB_TOKEN}@github.com/Ronnypetson/nicoboco.git
