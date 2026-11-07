@@ -20,7 +20,7 @@ import numpy as np
 import json
 import re
 import os
-import eco2ai
+# import eco2ai
 
 import sympy as sp
 import inspect
@@ -359,17 +359,17 @@ def evaluate_model(*,
         grid_time = time.time() - t0t
         print('Tuning time measure:', grid_time)
         
-    # performing the final training --------------------------------------------
-    if ecotracker:
-        print("Initializing ecotracker")
-        # file name should be something that will avoid parallel writing
-        tracker = eco2ai.Tracker(
-            project_name=dataset.split('/')[-1].split('.')[0], # dataset
-            experiment_description=f'{est_name} {random_state}', # ml method and random seed
-            file_name=os.path.join(results_path,id+"_eco2ai.csv"),
-            alpha_2_code='US'
-        )
-        tracker.start()
+    # # performing the final training --------------------------------------------
+    # if ecotracker:
+    #     print("Initializing ecotracker")
+    #     # file name should be something that will avoid parallel writing
+    #     tracker = eco2ai.Tracker(
+    #         project_name=dataset.split('/')[-1].split('.')[0], # dataset
+    #         experiment_description=f'{est_name} {random_state}', # ml method and random seed
+    #         file_name=os.path.join(results_path,id+"_eco2ai.csv"),
+    #         alpha_2_code='US'
+    #     )
+    #     tracker.start()
 
     signal.signal(signal.SIGALRM, alarm_handler)
     signal.alarm(fit_time_limit + 600)
@@ -386,12 +386,12 @@ def evaluate_model(*,
     time_time = time.time() - t0t
     print('single fit time measure:', time_time)
 
-    if ecotracker:
-        tracker.stop()
-        # Read emission data
-        df_eco2ai = pd.read_csv(os.path.join(results_path,id+"_eco2ai.csv"), sep=',')
-        print("eco2ai tracker log")
-        print(df_eco2ai.T)
+    # if ecotracker:
+    #     tracker.stop()
+    #     # Read emission data
+    #     df_eco2ai = pd.read_csv(os.path.join(results_path,id+"_eco2ai.csv"), sep=',')
+    #     print("eco2ai tracker log")
+    #     print(df_eco2ai.T)
     
     if 'geneticengine' in est_name:
         est._is_fitted = True
