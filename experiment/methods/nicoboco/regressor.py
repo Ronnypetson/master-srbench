@@ -8,6 +8,9 @@ from nicoboco.constraints import StructuralConstraints # type: ignore
 from nicoboco.canon import db_recompute_comb_size_enumeration # type: ignore
 from nicoboco.nnet import ConditionalGenericCausalTransformer # type: ignore
 
+def model(est, X=None):
+    return est.expression
+
 ### NUMERIC OPERATORS
 
 class Add(Operator):
@@ -120,7 +123,7 @@ policy_model = ConditionalGenericCausalTransformer(
     num_in_size=num_points,
 ).to(device)
 
-regressor = SymbolicRegressor(
+est = SymbolicRegressor(
     primitives,
     policy_model,
     canon_expr,
