@@ -87,7 +87,7 @@ est = SymbolicRegressor(
     canon_ptrs,
     num_points=64,
     numeric_padding=0.0,
-    const_prob=(1/7),
+    const_prob=(1 / 7),
     random_sample=True,
     tgt_noise_level=0.0,
     batch_size=96,
