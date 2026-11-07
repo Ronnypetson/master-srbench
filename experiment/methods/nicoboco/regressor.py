@@ -2,78 +2,25 @@ import os
 import torch # type: ignore
 
 from nicoboco.regressor import SymbolicRegressor # type: ignore
-from nicoboco.operators import Operator # type: ignore
 from nicoboco.primitives import Primitives # type: ignore
 from nicoboco.constraints import StructuralConstraints # type: ignore
 from nicoboco.canon import db_recompute_comb_size_enumeration # type: ignore
 from nicoboco.nnet import ConditionalGenericCausalTransformer # type: ignore
 
+from .customop import Add, Sub, Mul, Div, Pow, Log, Sin, Cos # type: ignore
+
+
 def model(est, X=None):
     return est.expression
-
-### NUMERIC OPERATORS
-
-class Add(Operator):
-    arity = 2
-    def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return x + y
-
-class Sub(Operator):
-    arity = 2
-    def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return x - y
-
-class Mul(Operator):
-    arity = 2
-    def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return x * y
-
-class Div(Operator):
-    arity = 2
-    def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return x / y
-
-class Pow(Operator):
-    arity = 2
-    def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return x ** y
-
-class Log(Operator):
-    arity = 2
-    def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-        return torch.log(x) / torch.log(y)
-
-class Sqrt(Operator):
-    arity = 1
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return torch.sqrt(x)
-
-class Square(Operator):
-    arity = 1
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return x * x
-
-class Sin(Operator):
-    arity = 1
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return torch.sin(x)
-
-class Cos(Operator):
-    arity = 1
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return torch.cos(x)
 
 def param_sampler(lo=-8.0, hi=8.0):
     assert hi > lo
     return lo + (hi - lo) * torch.rand(1, dtype=torch.float64)
 
 max_expr_len = 7
-# ext_max_expr_len = 2 * max_expr_len - 1 # 'None' for no extension
-# ext_trials = 100000
 
 op_list = [
     Add(), Sub(), Mul(), Div(), Pow(), Log(),
-    # Sqrt(), Square(),
     Sin(), Cos(),
 ]
 varlist = [f"x{idx}" for idx in range(20)]
@@ -86,8 +33,6 @@ primitives = Primitives(
 constraints = StructuralConstraints(
     max_complexity=max_expr_len,
     nested_rules={
-        # "Sqrt": {"Sqrt": 0, "Square": 1},
-        # "Square": {"Sqrt": 1, "Square": 1},
         "Sin": {"Sin": 0, "Cos": 0, "Pow": 1, "Log": 0},
         "Cos": {"Sin": 0, "Cos": 0, "Pow": 1, "Log": 0},
         "Pow": {"Pow": 0, "Log": 1, "Sin": 1, "Cos": 1},
