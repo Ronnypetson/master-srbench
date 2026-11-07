@@ -4,7 +4,7 @@ channels:
 dependencies:
   - python>=3.11
   - numpy
-  - pytorch
+  - pytorch =*=*cuda*
   - scikit-learn
   - sympy
   - tqdm
