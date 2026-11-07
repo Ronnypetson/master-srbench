@@ -20,8 +20,8 @@ def param_sampler(lo=-8.0, hi=8.0):
 max_expr_len = 7
 
 op_list = [
-    Add(), Sub(), Mul(), Div(), Pow(), Log(),
-    Sin(), Cos(),
+    Add(), Sub(), Mul(), Div(), Pow(), Log(), # Binary
+    Sin(), Cos(), # Unary
 ]
 varlist = [f"x{idx}" for idx in range(20)]
 primitives = Primitives(
