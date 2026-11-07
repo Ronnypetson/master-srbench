@@ -21,8 +21,8 @@ max_expr_len = 7
 maxnvar = 6
 
 op_list = [
-    Add(), Sub(), Mul(), Div(), Pow(), Log(), # Binary
-    Sin(), Cos(), # Unary
+    Add(), Sub(), Mul(), Div(), Pow(), Log(),
+    Sin(), Cos(),
 ]
 varlist = [f"x{idx}" for idx in range(maxnvar)]
 primitives = Primitives(
