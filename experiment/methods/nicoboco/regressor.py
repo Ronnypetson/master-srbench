@@ -18,12 +18,13 @@ def param_sampler(lo=-8.0, hi=8.0):
     return lo + (hi - lo) * torch.rand(1, dtype=torch.float64)
 
 max_expr_len = 7
+maxnvar = 6
 
 op_list = [
     Add(), Sub(), Mul(), Div(), Pow(), Log(), # Binary
     Sin(), Cos(), # Unary
 ]
-varlist = [f"x{idx}" for idx in range(20)]
+varlist = [f"x{idx}" for idx in range(maxnvar)]
 primitives = Primitives(
     operators=op_list,
     varnames=varlist,
