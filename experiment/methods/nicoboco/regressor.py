@@ -19,8 +19,9 @@ def param_sampler(lo=-8.0, hi=8.0):
     return lo + (hi - lo) * torch.rand(1, dtype=torch.float64)
 
 
-max_expr_len = 7
-maxnvar = 6
+max_expr_len = 10
+effective_max_expr_len = 2 * max_expr_len - 1
+maxnvar = 10
 
 op_list = [
     Add(),
@@ -57,11 +58,13 @@ canon_expr, _, canon_ptrs = db_recompute_comb_size_enumeration(
     primitives,
     constraints,
     arr_domain,
+    commit_every=1000000,
     work_dir=enum_work_dir,
 )
 print(canon_ptrs)
 
 canon_max = max(canon_ptrs.keys())
+assert canon_max == max_expr_len
 num_points = 64
 d_model = 1024
 nhead = 8
@@ -76,7 +79,7 @@ policy_model = ConditionalGenericCausalTransformer(
     d_model,
     nhead,
     num_layers,
-    max_seq_len=(canon_max + ctr_nvar),
+    max_seq_len=(effective_max_expr_len + ctr_nvar),
     num_in_size=num_points,
 ).to(device)
 
@@ -94,14 +97,14 @@ est = SymbolicRegressor(
     batch_size=96,
     num_workers=0,
     peak_lr=1e-5,
-    warmup_steps=500,
-    total_iter=2000,
+    warmup_steps=2000,
+    total_iter=8000,
     weight_decay=0.01,
     hyp_per_turn=100,
-    max_turns=1000,
+    max_turns=10000,
     n_pts_fit=128,
     eps=1e-7,
-    test_eps=1e-2,
+    test_eps=5e-1, # 1e-2 for ground-truth problems
     n_inits=400,
     fit_params=True,
     full_it=10,
