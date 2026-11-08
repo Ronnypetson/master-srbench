@@ -1,0 +1,15 @@
+name: nicoboco
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.11
+  - numpy
+  - scikit-learn
+  - sympy
+  - tqdm
+  - pandas
+  - pip
+  - pip:
+      - torch
+      - torchvision
+      - nicoboco @ git+https://${GITHUB_TOKEN}@github.com/Ronnypetson/nicoboco.git
