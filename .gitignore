@@ -2,6 +2,9 @@ docker-compose.yml
 *.lock.yml
 .idea
 results_*/
+datasets/
+experiment/datasets/
+experiment/tmp/
 *.swp
 tmp_*
 # Byte-compiled / optimized / DLL files

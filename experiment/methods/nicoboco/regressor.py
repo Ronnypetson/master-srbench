@@ -5,7 +5,7 @@ from nicoboco.canon import db_recompute_comb_size_enumeration
 from nicoboco.constraints import StructuralConstraints
 from nicoboco.nnet import ConditionalGenericCausalTransformer
 from nicoboco.primitives import Primitives
-from nicoboco.regressor import SymbolicRegressor
+from nicoboco.regressor import CanonExpressionDataset, SymbolicRegressor
 
 from .customop import Add, Cos, Div, Log, Mul, Pow, Sin, Sub
 
@@ -80,11 +80,12 @@ policy_model = ConditionalGenericCausalTransformer(
     num_in_size=num_points,
 ).to(device)
 
+canon_dataset = CanonExpressionDataset(canon_expr, canon_ptrs)
+
 est = SymbolicRegressor(
     primitives,
     policy_model,
-    canon_expr,
-    canon_ptrs,
+    canon_dataset,
     num_points=64,
     numeric_padding=0.0,
     const_prob=(1 / 7),
