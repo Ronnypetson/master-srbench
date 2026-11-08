@@ -3,6 +3,7 @@ singularity
 *.lock.yml
 .idea
 results_*/
+experiment/tmp/
 *.swp
 tmp_*
 postprocessing/figs/*
