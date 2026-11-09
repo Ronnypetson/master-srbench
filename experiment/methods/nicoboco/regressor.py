@@ -19,7 +19,7 @@ def param_sampler(lo=-8.0, hi=8.0):
     return lo + (hi - lo) * torch.rand(1, dtype=torch.float64)
 
 
-max_expr_len = 10
+max_expr_len = 11
 effective_max_expr_len = 2 * max_expr_len - 1
 maxnvar = 10
 
@@ -65,7 +65,7 @@ print(canon_ptrs)
 
 canon_max = max(canon_ptrs.keys())
 assert canon_max == max_expr_len
-num_points = 64
+num_points = 128
 d_model = 1024
 nhead = 8
 num_layers = 16
@@ -89,7 +89,7 @@ est = SymbolicRegressor(
     primitives,
     policy_model,
     canon_dataset,
-    num_points=64,
+    num_points=num_points,
     numeric_padding=0.0,
     const_prob=(1 / 7),
     random_sample=True,
@@ -102,9 +102,9 @@ est = SymbolicRegressor(
     weight_decay=0.01,
     hyp_per_turn=100,
     max_turns=10000,
-    n_pts_fit=128,
+    n_pts_fit=256,
     eps=1e-7,
-    test_eps=5e-1, # 1e-2 for ground-truth problems
+    test_eps=1.0, # 1e-2 for ground-truth problems
     n_inits=400,
     fit_params=True,
     full_it=10,
