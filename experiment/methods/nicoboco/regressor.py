@@ -1,11 +1,13 @@
 import os
 
 import torch
+from huggingface_hub import hf_hub_download
 from nicoboco.canon import db_recompute_comb_size_enumeration
 from nicoboco.constraints import StructuralConstraints
 from nicoboco.nnet import ConditionalGenericCausalTransformer
 from nicoboco.primitives import Primitives
 from nicoboco.regressor import CanonExpressionDataset, SymbolicRegressor
+from nicoboco.canon import DbCanonFringe
 
 from .customop import Add, Cos, Div, Log, Mul, Pow, Sin, Sub
 
@@ -19,9 +21,9 @@ def param_sampler(lo=-8.0, hi=8.0):
     return lo + (hi - lo) * torch.rand(1, dtype=torch.float64)
 
 
-max_expr_len = 11
+max_expr_len = 12
 effective_max_expr_len = 2 * max_expr_len - 1
-maxnvar = 10
+maxnvar = 20
 
 op_list = [
     Add(),
@@ -53,14 +55,31 @@ constraints = StructuralConstraints(
 
 arr_domain = torch.rand((6, 10), dtype=torch.float64) * 20 - 10
 scratch_root = "tmp"
-enum_work_dir = os.path.join(scratch_root, "nicoboco_enum_tmp")
-canon_expr, _, canon_ptrs = db_recompute_comb_size_enumeration(
-    primitives,
-    constraints,
-    arr_domain,
-    commit_every=1000000,
-    work_dir=enum_work_dir,
-)
+
+import hashlib
+
+ctx_hash = hashlib.sha256(
+    (
+        f"{''.join(primitives.vocab.itos)}"
+        + str(constraints.max_complexity)
+        + str(effective_max_expr_len)
+        + str(constraints.nested_rules)
+        + str(constraints.max_op_counts)
+    ).encode('utf-8')
+).hexdigest()[:8]
+
+enum_work_dir = os.path.join(scratch_root, f"nicoboco_enum_{ctx_hash}")
+# canon_expr, _, canon_ptrs = db_recompute_comb_size_enumeration(
+#     primitives,
+#     constraints,
+#     arr_domain,
+#     commit_every=1000000,
+#     work_dir=enum_work_dir,
+# )
+canon_db_file = f"{enum_work_dir}/all_ids.sqlite3"
+hf_hub_download(repo_id="Ronnypetson/canonexpr", filename=canon_db_file)
+canon_expr = DbCanonFringe(canon_db_file)
+canon_ptrs = canon_expr.size_ptrs
 print(canon_ptrs)
 
 canon_max = max(canon_ptrs.keys())
