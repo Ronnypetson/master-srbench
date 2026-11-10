@@ -8,6 +8,7 @@ dependencies:
   - sympy
   - tqdm
   - pandas
+  - huggingface_hub
   - pip
   - pip:
       - torch
