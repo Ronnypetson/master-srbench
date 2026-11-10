@@ -3,6 +3,7 @@ import os
 import torch
 from huggingface_hub import hf_hub_download
 from nicoboco.canon import db_recompute_comb_size_enumeration
+from nicoboco.canon import db_expand_canon_unrestricted
 from nicoboco.constraints import StructuralConstraints
 from nicoboco.nnet import ConditionalGenericCausalTransformer
 from nicoboco.primitives import Primitives
@@ -68,7 +69,7 @@ ctx_hash = hashlib.sha256(
     ).encode('utf-8')
 ).hexdigest()[:8]
 
-enum_work_dir = os.path.join(scratch_root, f"nicoboco_enum_{ctx_hash}")
+# enum_work_dir = os.path.join(scratch_root, f"nicoboco_enum_{ctx_hash}")
 # canon_expr, _, canon_ptrs = db_recompute_comb_size_enumeration(
 #     primitives,
 #     constraints,
@@ -76,8 +77,31 @@ enum_work_dir = os.path.join(scratch_root, f"nicoboco_enum_{ctx_hash}")
 #     commit_every=1000000,
 #     work_dir=enum_work_dir,
 # )
-canon_db_file = f"{enum_work_dir}/all_ids.sqlite3"
-hf_hub_download(repo_id="Ronnypetson/canonexpr", filename=canon_db_file)
+# print(canon_ptrs)
+# db_expand_canon_unrestricted(
+#     primitives,
+#     max_expr_len, # max_expr_len, ### use ext_max_expr_len when needed
+#     0, # 0, ### use ext_trials when needed
+#     canon_expr,
+#     canon_ptrs,
+#     work_dir=enum_work_dir,
+#     db_name="all_ids.sqlite3",
+#     commit_every=100000,
+#     journal_mode="MEMORY",
+#     locking_mode="EXCLUSIVE",
+#     cache_size=-262144,
+#     load_fringe=False,
+# )
+# canon_db_file = f"{enum_work_dir}/all_ids.sqlite3"
+# canon_expr = DbCanonFringe(canon_db_file)
+# canon_ptrs = canon_expr.size_ptrs
+# print(canon_ptrs)
+
+canon_db_file = hf_hub_download(
+    repo_id="Ronnypetson/canonexpr",
+    filename=f"all_ids_{ctx_hash}.sqlite3",
+    repo_type="dataset",
+)
 canon_expr = DbCanonFringe(canon_db_file)
 canon_ptrs = canon_expr.size_ptrs
 print(canon_ptrs)
