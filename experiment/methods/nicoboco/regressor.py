@@ -58,6 +58,7 @@ arr_domain = torch.rand((6, 10), dtype=torch.float64) * 20 - 10
 scratch_root = "tmp"
 
 import hashlib
+from pickle import load
 
 ctx_hash = hashlib.sha256(
     (
@@ -78,6 +79,9 @@ ctx_hash = hashlib.sha256(
 #     work_dir=enum_work_dir,
 # )
 # print(canon_ptrs)
+# from pickle import dump
+# with open(os.path.join(scratch_root, f"canon_{ctx_hash}.pkl"), "wb") as f:
+#     dump((canon_expr, canon_ptrs), f)
 # db_expand_canon_unrestricted(
 #     primitives,
 #     max_expr_len, # max_expr_len, ### use ext_max_expr_len when needed
@@ -97,13 +101,15 @@ ctx_hash = hashlib.sha256(
 # canon_ptrs = canon_expr.size_ptrs
 # print(canon_ptrs)
 
-canon_db_file = hf_hub_download(
+canon_file = hf_hub_download(
     repo_id="Ronnypetson/canonexpr",
-    filename=f"all_ids_{ctx_hash}.sqlite3",
+    filename=f"canon_{ctx_hash}.pkl",
     repo_type="dataset",
 )
-canon_expr = DbCanonFringe(canon_db_file)
-canon_ptrs = canon_expr.size_ptrs
+# canon_expr = DbCanonFringe(canon_db_file)
+# canon_ptrs = canon_expr.size_ptrs
+with open(canon_file, "rb") as f:
+    canon_expr, canon_ptrs = load(f)
 print(canon_ptrs)
 
 canon_max = max(canon_ptrs.keys())
